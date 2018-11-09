@@ -1,36 +1,19 @@
-var webpack = require('webpack');
-var path = require('path');
-var libraryName = 'library';
-var outputFile = libraryName + '.js';
-
-var config = {
-  entry: __dirname + '/src/index.js',
-  devtool: 'source-map',
+module.exports = {
+  devtool: "source-map",
+  performance: { hints: false },
   output: {
-    path: __dirname + '/lib',
-    filename: outputFile,
-    library: libraryName,
+    library: 'anglemeter',
     libraryTarget: 'umd',
-    umdNamedDefine: true
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /(\.jsx|\.js)$/,
-        loader: 'babel',
-        exclude: /(node_modules|bower_components)/
+        use: {
+          loader: 'babel-loader',
+        },
+        exclude: /(node_modules|bower_components)/,
       },
-      {
-        test: /(\.jsx|\.js)$/,
-        loader: "eslint-loader",
-        exclude: /node_modules/
-      }
     ]
   },
-  resolve: {
-    root: path.resolve('./src'),
-    extensions: ['', '.js']
-  }
-};
-
-module.exports = config;
+}

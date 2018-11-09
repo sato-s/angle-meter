@@ -1,13 +1,7 @@
-var path = null
-var circle = null
-var svg = null
+import paper from 'paper/dist/paper-core'
 
-class AngleMeter {
+export class AngleMeter {
   constructor(options) {
-    default = {
-      radius: 70,
-      strokeColor: 'black',
-    }
     this.angle = 0
     this.radius =  70
     this.center= new paper.Point(this.radius, this.radius)
@@ -54,15 +48,18 @@ class AngleMeter {
   }
 
   draw(){
+    var canvas = document.getElementById('myCanvas');
+    paper.setup(canvas);
     this.circle = new paper.Path.Circle({
       center: this.center,
       radius: this.radius,
     });
-		this.circle.strokeColor = this.strokeColor;
-		this.circle.fillColor = this.fillColor;
+    this.circle.strokeColor = this.strokeColor;
+    this.circle.fillColor = this.fillColor;
     this.drawScale()
     this.drawModel()
     this.drawCrossLight()
+    paper.view.draw();
   }
 
   rotate(absAngle){
@@ -151,13 +148,6 @@ class AngleMeter {
 }
 
 window.onload = function() {
-  var canvas = document.getElementById('myCanvas');
-  paper.setup(canvas);
-  circle = new AngleMeter()
-  circle.draw()
-  paper.view.draw();
-}
-
-var rotate = function(angle){
-  circle.rotate(angle)
+  // circle = new AngleMeter()
+  // circle.draw()
 }
