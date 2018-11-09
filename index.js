@@ -10,10 +10,12 @@ const defaultOptions = {
 export class AngleMeter {
   constructor(inputOptions) {
     const options = Object.assign(defaultOptions, inputOptions)
+    // Create instance specific paper scope to take care of multiple canvases
+    this.paper = new paper.PaperScope();
     this.angle = 0
     this.radius =  70
     this.angleHistory = []
-    this.center= new paper.Point(this.radius, this.radius)
+    this.center= new this.paper.Point(this.radius, this.radius)
     this.strokeColor = options.strokeColor
     this.bindTo = options.bindTo
     this.fillColor = options.fillColor
@@ -51,16 +53,16 @@ export class AngleMeter {
   }
 
   getModelBoundingBox(){
-    let vector = new paper.Point(this.radius, this.radius)
+    let vector = new this.paper.Point(this.radius, this.radius)
     let topLeft = this.center.subtract(vector)
-    let box = new paper.Rectangle(topLeft, this.radius * 2)
+    let box = new this.paper.Rectangle(topLeft, this.radius * 2)
     return box
   }
 
   draw(){
     var canvas = document.getElementById(this.bindTo);
-    paper.setup(canvas);
-    this.circle = new paper.Path.Circle({
+    this.paper.setup(canvas);
+    this.circle = new this.paper.Path.Circle({
       center: this.center,
       radius: this.radius,
     });
@@ -69,7 +71,7 @@ export class AngleMeter {
     this.drawScale()
     this.drawModel()
     this.drawCrossLight()
-    paper.view.draw();
+    this.paper.view.draw();
   }
 
   rotate(absAngle){
@@ -93,7 +95,7 @@ export class AngleMeter {
   }
 
   drawModel(){
-    paper.project.importSVG(this.model.src, function(item){
+    this.paper.project.importSVG(this.model.src, function(item){
       item.data.id = 'model'
       item.fitBounds(this.getModelBoundingBox())
       item.scale(this.model.scaleFactor)
@@ -106,25 +108,25 @@ export class AngleMeter {
 
   drawCrossLight(){
     let halfLength = this.radius - this.config.crosslight.padding
-    var start = new paper.Point(this.center.x, this.center.y - halfLength)
-    var end = new paper.Point(this.center.x, this.center.y + halfLength)
-    let path1 = new paper.Path.Line(start, end)
+    var start = new this.paper.Point(this.center.x, this.center.y - halfLength)
+    var end = new this.paper.Point(this.center.x, this.center.y + halfLength)
+    let path1 = new this.paper.Path.Line(start, end)
     path1.strokeColor = this.config.crosslight.color
     path1.strokeWidth = this.config.crosslight.width
     path1.dashArray = [2, 2]
 
-    var start = new paper.Point(this.center.x - halfLength, this.center.y)
-    var end = new paper.Point(this.center.x + halfLength, this.center.y)
-    let path2 = new paper.Path.Line(start, end)
+    var start = new this.paper.Point(this.center.x - halfLength, this.center.y)
+    var end = new this.paper.Point(this.center.x + halfLength, this.center.y)
+    let path2 = new this.paper.Path.Line(start, end)
     path2.strokeColor = this.config.crosslight.color
     path2.strokeWidth = this.config.crosslight.width
     path2.dashArray = [2, 2]
 
-    this.crosslight = new paper.Group([path1, path2])
+    this.crosslight = new this.paper.Group([path1, path2])
   }
 
   getModel(){
-    return paper.project.getItem({
+    return this.paper.project.getItem({
       match: function(item){ return (item.data.id == 'model') }
     })
   }
@@ -141,7 +143,7 @@ export class AngleMeter {
   }
 
   drawLabel(point, text){
-    let pointText = new paper.PointText(point)
+    let pointText = new this.paper.PointText(point)
     pointText.justification = 'center';
     pointText.content = text
   }
@@ -151,19 +153,19 @@ export class AngleMeter {
   }
 
   drawRadiusLine(angle, width, color, factor){
-    let start = new paper.Point(this.center.x, this.center.y - this.radius)
+    let start = new this.paper.Point(this.center.x, this.center.y - this.radius)
     let _end  = this.center
     var vector = start.subtract(_end)
     vector = vector.multiply(factor)
     let end = _end.add(vector)
-    let path = new paper.Path.Line(start, end)
+    let path = new this.paper.Path.Line(start, end)
     path.strokeColor = color
     path.strokeWidth = width
     path.rotate(angle, this.center)
   }
 
   getBoundaryPointAtAgnle(angle){
-    var point = new paper.Point(this.center.x, this.center.y - this.radius)
+    var point = new this.paper.Point(this.center.x, this.center.y - this.radius)
     return point.rotate(angle, this.center)
   }
 }
