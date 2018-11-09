@@ -53,7 +53,7 @@ export class AngleMeter {
 			angleLabel: {
         opacity: 0.8,
 				color: 'black',
-				fontSize: (this.radius / 7),
+				fontSize: (this.radius / 6),
 			},
       histgram: {
         color: 'blue',
