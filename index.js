@@ -90,6 +90,7 @@ export class AngleMeter {
   }
 
   rotateWithHistgram(absAngle){
+    this.paper.activate()
     this.rotateSafe(absAngle)
     this.drawHistgram(absAngle)
   }
