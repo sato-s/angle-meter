@@ -1,5 +1,5 @@
 {
-  "name": "angle-meter",
+  "name": "anglemeter",
   "version": "1.0.0",
   "description": "Angle meter library",
   "main": "index.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sato-s/angle-meter.git"
+    "url": "git+https://github.com/sato-s/anglemeter.git"
   },
   "keywords": [
     "angle",
@@ -19,9 +19,9 @@
   "author": "sato-s",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/sato-s/angle-meter/issues"
+    "url": "https://github.com/sato-s/anglemeter/issues"
   },
-  "homepage": "https://github.com/sato-s/angle-meter#readme",
+  "homepage": "https://github.com/sato-s/anglemeter#readme",
   "dependencies": {
     "paper": "^0.11.8"
   },
