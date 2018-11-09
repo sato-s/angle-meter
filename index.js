@@ -5,6 +5,7 @@ const defaultOptions = {
   strokeColor: 'black',
   fillColor: 'white',
   bindTo: 'anglemeter',
+  radius: 70,
 }
 
 export class AngleMeter {
@@ -13,42 +14,42 @@ export class AngleMeter {
     // Create instance specific paper scope to take care of multiple canvases
     this.paper = new paper.PaperScope();
     this.angle = 0
-    this.radius =  70
     this.angleHistory = []
+    this.radius =  options.radius
     this.center= new this.paper.Point(this.radius, this.radius)
     this.strokeColor = options.strokeColor
     this.bindTo = options.bindTo
     this.fillColor = options.fillColor
-    this.scale = {
-      sub : {
-        interval: 5,
-        factor: 0.93,
-        color: 'black',
-        width: 1,
-      },
-      primary: {
-        interval: 45,
-        factor: 0.9,
-        color: 'black',
-        width: 1.5,
-      }
-    }
-    this.histgram = {
-      color: 'blue',
-      factor: 0.94,
-      width: 2,
-    }
-    this.model = {
-      id: 'model',
-      src: options.src,
-      scaleFactor: 0.6,
-    }
     this.config = {
+      scale: {
+        sub : {
+          interval: 5,
+          factor: 0.93,
+          color: 'black',
+          width: 1,
+        },
+        primary: {
+          interval: 45,
+          factor: 0.9,
+          color: 'black',
+          width: 1.5,
+        },
+      },
       crosslight: {
         color: 'grey',
         padding: 10,
         width: 2,
-      }
+      },
+      histgram: {
+        color: 'blue',
+        factor: 0.94,
+        width: 2,
+      },
+      model: {
+        id: 'model',
+        src: options.src,
+        scaleFactor: 0.6,
+      },
     }
   }
 
@@ -76,13 +77,13 @@ export class AngleMeter {
 
   rotate(absAngle){
     let relativeAngle = - (this.angle - absAngle)
-    this._model.rotate(relativeAngle, this.center)
+    this.model.rotate(relativeAngle, this.center)
     this.crosslight.rotate(relativeAngle, this.center)
     this.angle = absAngle
   }
 
   rotateSafe(absAngle){
-    if (this._model == null){
+    if (this.model == null){
       this.angleHistory.push(absAngle)
     }else{
       this.rotate(absAngle)
@@ -96,11 +97,11 @@ export class AngleMeter {
   }
 
   drawModel(){
-    this.paper.project.importSVG(this.model.src, function(item){
+    this.paper.project.importSVG(this.config.model.src, function(item){
       item.data.id = 'model'
       item.fitBounds(this.getModelBoundingBox())
-      item.scale(this.model.scaleFactor)
-      this._model = item
+      item.scale(this.config.model.scaleFactor)
+      this.model = item
       this.angleHistory.forEach((angle) => {
         this.rotate(angle)
       })
@@ -133,12 +134,21 @@ export class AngleMeter {
   }
 
   drawScale(){
-    for (var angle=0; angle< 360; angle = angle + this.scale.sub.interval) {
-      if (angle % this.scale.primary.interval == 0){
-        this.drawRadiusLine(angle, this.scale.primary.width, this.scale.primary.color, this.scale.primary.factor)
-        // this.drawLabel(this.getBoundaryPointAtAgnle(angle), `${angle}`)
+    for (var angle=0; angle< 360; angle = angle + this.config.scale.sub.interval) {
+      if (angle % this.config.scale.primary.interval == 0){
+        this.drawRadiusLine(
+          angle,
+          this.config.scale.primary.width,
+          this.config.scale.primary.color,
+          this.config.scale.primary.factor
+        )
       }else{
-        this.drawRadiusLine(angle, this.scale.sub.width, this.scale.sub.color, this.scale.sub.factor)
+        this.drawRadiusLine(
+          angle,
+          this.config.scale.sub.width,
+          this.config.scale.sub.color,
+          this.config.scale.sub.factor
+        )
       }
     }
   }
@@ -150,7 +160,12 @@ export class AngleMeter {
   }
 
   drawHistgram(angle){
-    this.drawRadiusLine(angle, this.histgram.width, this.histgram.color, this.histgram.factor)
+    this.drawRadiusLine(
+      angle,
+      this.config.histgram.width,
+      this.config.histgram.color,
+      this.config.histgram.factor
+    )
   }
 
   drawRadiusLine(angle, width, color, factor){
