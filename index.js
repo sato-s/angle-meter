@@ -53,13 +53,6 @@ export class AngleMeter {
     }
   }
 
-  getModelBoundingBox(){
-    let vector = new this.paper.Point(this.radius, this.radius)
-    let topLeft = this.center.subtract(vector)
-    let box = new this.paper.Rectangle(topLeft, this.radius * 2)
-    return box
-  }
-
   draw(){
     var canvas = document.getElementById(this.bindTo);
     this.paper.setup(canvas);
@@ -75,7 +68,7 @@ export class AngleMeter {
     this.paper.view.draw();
   }
 
-  rotate(absAngle){
+  rotateInternal(absAngle){
     let relativeAngle = - (this.angle - absAngle)
     this.model.rotate(relativeAngle, this.center)
     this.crosslight.rotate(relativeAngle, this.center)
@@ -83,15 +76,19 @@ export class AngleMeter {
   }
 
   rotateSafe(absAngle){
+    this.paper.activate()
     if (this.model == null){
       this.angleHistory.push(absAngle)
     }else{
-      this.rotate(absAngle)
+      this.rotateInternal(absAngle)
     }
   }
 
+  rotate(absAngle){
+    this.rotateSafe(absAngle)
+  }
+
   rotateWithHistgram(absAngle){
-    this.paper.activate()
     this.rotateSafe(absAngle)
     this.drawHistgram(absAngle)
   }
@@ -125,12 +122,6 @@ export class AngleMeter {
     path2.dashArray = [2, 2]
 
     this.crosslight = new this.paper.Group([path1, path2])
-  }
-
-  getModel(){
-    return this.paper.project.getItem({
-      match: function(item){ return (item.data.id == 'model') }
-    })
   }
 
   drawScale(){
@@ -184,4 +175,12 @@ export class AngleMeter {
     var point = new this.paper.Point(this.center.x, this.center.y - this.radius)
     return point.rotate(angle, this.center)
   }
+
+  getModelBoundingBox(){
+    let vector = new this.paper.Point(this.radius, this.radius)
+    let topLeft = this.center.subtract(vector)
+    let box = new this.paper.Rectangle(topLeft, this.radius * 2)
+    return box
+  }
+
 }
