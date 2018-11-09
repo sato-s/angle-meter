@@ -2,6 +2,7 @@ module.exports = {
   devtool: "source-map",
   performance: { hints: false },
   output: {
+    filename: 'anglemeter.js',
     library: 'anglemeter',
     libraryTarget: 'umd',
   },

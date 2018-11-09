@@ -1,11 +1,17 @@
 import paper from 'paper/dist/paper-core'
 
+const defaultOptions = {
+  src: null,
+  strokeColor: 'black'
+}
+
 export class AngleMeter {
-  constructor(options) {
+  constructor(inputOptions) {
+    const options = Object.assign(defaultOptions, inputOptions)
     this.angle = 0
     this.radius =  70
     this.center= new paper.Point(this.radius, this.radius)
-    this.strokeColor = 'black'
+    this.strokeColor = options.strokeColor
     this.fillColor = 'white'
     this.scale = {
       sub : {
@@ -28,7 +34,7 @@ export class AngleMeter {
     }
     this.model = {
       id: 'model',
-      src: 'boat_side.svg',
+      src: options.src,
       scaleFactor: 0.6,
     }
     this.config = {
@@ -145,9 +151,4 @@ export class AngleMeter {
     var point = new paper.Point(this.center.x, this.center.y - this.radius)
     return point.rotate(angle, this.center)
   }
-}
-
-window.onload = function() {
-  // circle = new AngleMeter()
-  // circle.draw()
 }
