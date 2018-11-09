@@ -2,7 +2,9 @@ import paper from 'paper/dist/paper-core'
 
 const defaultOptions = {
   src: null,
-  strokeColor: 'black'
+  strokeColor: 'black',
+  fillColor: 'white',
+  bindTo: 'anglemeter',
 }
 
 export class AngleMeter {
@@ -12,7 +14,8 @@ export class AngleMeter {
     this.radius =  70
     this.center= new paper.Point(this.radius, this.radius)
     this.strokeColor = options.strokeColor
-    this.fillColor = 'white'
+    this.bindTo = options.bindTo
+    this.fillColor = options.fillColor
     this.scale = {
       sub : {
         interval: 5,
@@ -54,7 +57,7 @@ export class AngleMeter {
   }
 
   draw(){
-    var canvas = document.getElementById('myCanvas');
+    var canvas = document.getElementById(this.bindTo);
     paper.setup(canvas);
     this.circle = new paper.Path.Circle({
       center: this.center,
