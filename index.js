@@ -12,6 +12,7 @@ export class AngleMeter {
     const options = Object.assign(defaultOptions, inputOptions)
     this.angle = 0
     this.radius =  70
+    this.angleHistory = []
     this.center= new paper.Point(this.radius, this.radius)
     this.strokeColor = options.strokeColor
     this.bindTo = options.bindTo
@@ -78,8 +79,16 @@ export class AngleMeter {
     this.angle = absAngle
   }
 
+  rotateSafe(absAngle){
+    if (this._model == null){
+      this.angleHistory.push(absAngle)
+    }else{
+      this.rotate(absAngle)
+    }
+  }
+
   rotateWithHistgram(absAngle){
-    this.rotate(absAngle)
+    this.rotateSafe(absAngle)
     this.drawHistgram(absAngle)
   }
 
@@ -89,6 +98,9 @@ export class AngleMeter {
       item.fitBounds(this.getModelBoundingBox())
       item.scale(this.model.scaleFactor)
       this._model = item
+      this.angleHistory.forEach((angle) => {
+        this.rotate(angle)
+      })
     }.bind(this))
   }
 
