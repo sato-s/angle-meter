@@ -19,13 +19,13 @@ export class AngleMeter {
     this.angle = 0
     this.angleHistory = []
     this.radius =  options.radius
-    this.center= new this.paper.Point(this.radius, this.radius)
     this.strokeColor = options.strokeColor
     this.bindTo = options.bindTo
     this.fillColor = options.fillColor
     this.config = {
       half: options.half,
       enableCrossLight: options.enableCrossLight,
+			baseCirclePadding: 30,
       scale: {
         sub : {
           interval: 5,
@@ -45,10 +45,16 @@ export class AngleMeter {
         padding: 10,
         width: 2,
       },
+      indicator: {
+        color: 'blue',
+        radius: 8,
+        opacity: 0.8,
+      },
       histgram: {
         color: 'blue',
         factor: 0.94,
         width: 2,
+        opacity: 0.4,
       },
       model: {
         id: 'model',
@@ -56,6 +62,11 @@ export class AngleMeter {
         scaleFactor: 0.6,
       },
     }
+
+    this.center= new this.paper.Point(
+			this.radius + this.config.baseCirclePadding,
+			this.radius + this.config.baseCirclePadding
+		)
   }
 
   draw(){
@@ -64,6 +75,8 @@ export class AngleMeter {
     this.drawBaseCircle()
     this.drawScale()
     this.drawModel()
+    this.drawIndicator()
+		this.drawCurrentAngleLabel()
     if (this.config.enableCrossLight){
       this.drawCrossLight()
     }
@@ -76,6 +89,10 @@ export class AngleMeter {
     if (this.config.enableCrossLight){
       this.crosslight.rotate(relativeAngle, this.center)
     }
+    this.indicator.rotate(relativeAngle, this.center)
+		this.currentAngleLabelPosition = this.currentAngleLabelPosition.rotate(relativeAngle, this.center)
+    this.currentAngleLabel.position = this.currentAngleLabelPosition
+    this.currentAngleLabel.content = absAngle
     this.angle = absAngle
   }
 
@@ -149,6 +166,31 @@ export class AngleMeter {
     this.crosslight = new this.paper.Group([path1, path2])
   }
 
+  drawIndicator(){
+    let center =
+      new this.paper.Point(this.center.x, this.center.y - this.radius - this.config.indicator.radius - 3)
+    this.indicator = new this.paper.Path.RegularPolygon(center, 3, this.config.indicator.radius);
+    this.indicator.rotate(180, center)
+    this.indicator.scale(0.4, 1, center)
+    this.indicator.fillColor = this.config.indicator.color;
+    this.indicator.opacity = this.config.indicator.opacity;
+  }
+
+  drawCurrentAngleLabel(){
+    this.currentAngleLabelPosition =
+      new this.paper.Point(
+				this.center.x,
+				this.center.y - this.radius - this.config.indicator.radius - 12
+			)
+		this.currentAngleLabel = new this.paper.PointText({
+			point: this.currentAngleLabelPosition,
+			justification: 'center',
+			fontSize: 6,
+			fillColor: 'black'
+		});
+		this.currentAngleLabel.content = this.angle
+  }
+
   drawScale(){
     let startAngle = this.config.half ? -90 : -180
     let endAngle = this.config.half ? 90 : 180
@@ -182,11 +224,12 @@ export class AngleMeter {
       angle,
       this.config.histgram.width,
       this.config.histgram.color,
-      this.config.histgram.factor
+      this.config.histgram.factor,
+      this.config.histgram.opacity
     )
   }
 
-  drawRadiusLine(angle, width, color, factor){
+  drawRadiusLine(angle, width, color, factor, opacity=1){
     let start = new this.paper.Point(this.center.x, this.center.y - this.radius)
     let _end  = this.center
     var vector = start.subtract(_end)
@@ -195,6 +238,7 @@ export class AngleMeter {
     let path = new this.paper.Path.Line(start, end)
     path.strokeColor = color
     path.strokeWidth = width
+    path.opacity = opacity
     path.rotate(angle, this.center)
   }
 
