@@ -6,11 +6,14 @@ const defaultOptions = {
   fillColor: 'white',
   bindTo: 'anglemeter',
   radius: 70,
+  half: false,
+  enableCrossLight: false,
 }
 
 export class AngleMeter {
   constructor(inputOptions) {
-    const options = Object.assign(defaultOptions, inputOptions)
+    const options = {}
+    Object.assign(options, defaultOptions, inputOptions)
     // Create instance specific paper scope to take care of multiple canvases
     this.paper = new paper.PaperScope();
     this.angle = 0
@@ -21,6 +24,8 @@ export class AngleMeter {
     this.bindTo = options.bindTo
     this.fillColor = options.fillColor
     this.config = {
+      half: options.half,
+      enableCrossLight: options.enableCrossLight,
       scale: {
         sub : {
           interval: 5,
@@ -56,22 +61,21 @@ export class AngleMeter {
   draw(){
     var canvas = document.getElementById(this.bindTo);
     this.paper.setup(canvas);
-    this.circle = new this.paper.Path.Circle({
-      center: this.center,
-      radius: this.radius,
-    });
-    this.circle.strokeColor = this.strokeColor;
-    this.circle.fillColor = this.fillColor;
+    this.drawBaseCircle()
     this.drawScale()
     this.drawModel()
-    this.drawCrossLight()
+    if (this.config.enableCrossLight){
+      this.drawCrossLight()
+    }
     this.paper.view.draw();
   }
 
   rotateInternal(absAngle){
     let relativeAngle = - (this.angle - absAngle)
     this.model.rotate(relativeAngle, this.center)
-    this.crosslight.rotate(relativeAngle, this.center)
+    if (this.config.enableCrossLight){
+      this.crosslight.rotate(relativeAngle, this.center)
+    }
     this.angle = absAngle
   }
 
@@ -93,6 +97,26 @@ export class AngleMeter {
     this.drawHistgram(absAngle)
   }
 
+  drawBaseCircle(){
+    this.circle = new this.paper.Path.Circle({
+      center: this.center,
+      radius: this.radius,
+    });
+    if (this.config.half){
+      // If this is `half` draw arc instead of circle
+      let start = new paper.Point(this.center.x - this.radius, this.center.y)
+      let through = new paper.Point(this.center.x, this.center.y - this.radius)
+      let end = new paper.Point(this.center.x + this.radius, this.center.y)
+      let arc = new paper.Path.Arc(start, through, end)
+      arc.strokeColor = this.strokeColor;
+      arc.fillColor = this.fillColor;
+    }
+    else{
+      this.circle.strokeColor = this.strokeColor;
+      this.circle.fillColor = this.fillColor;
+    }
+  }
+
   drawModel(){
     this.paper.project.importSVG(this.config.model.src, function(item){
       item.data.id = 'model'
@@ -106,6 +130,7 @@ export class AngleMeter {
   }
 
   drawCrossLight(){
+    this.paper.activate()
     let halfLength = this.radius - this.config.crosslight.padding
     var start = new this.paper.Point(this.center.x, this.center.y - halfLength)
     var end = new this.paper.Point(this.center.x, this.center.y + halfLength)
@@ -125,7 +150,9 @@ export class AngleMeter {
   }
 
   drawScale(){
-    for (var angle=0; angle< 360; angle = angle + this.config.scale.sub.interval) {
+    let startAngle = this.config.half ? -90 : -180
+    let endAngle = this.config.half ? 90 : 180
+    for (var angle = startAngle; angle <= endAngle; angle = angle + this.config.scale.sub.interval) {
       if (angle % this.config.scale.primary.interval == 0){
         this.drawRadiusLine(
           angle,

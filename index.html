@@ -5,12 +5,27 @@
   </head>
   <body>
       <h1>tatac</h1>
-            <canvas id="myCanvas" resize></canvas>
-            <canvas id="ccc" resize></canvas>
+            <canvas id="aaa" resize></canvas>
+            <canvas id="bbb" resize></canvas>
     <script>
-      var a = new anglemeter.AngleMeter({src: 'arrow.svg',strokeColor: 'red', bindTo: 'ccc', fillColor: 'blue'})
+      var a = new anglemeter.AngleMeter({
+        src: 'arrow.svg',
+        strokeColor: 'red',
+        bindTo: 'aaa',
+        fillColor: 'pink',
+        enableCrossLight: true,
+      })
       a.draw()
       a.rotateWithHistgram(65)
+      var b = new anglemeter.AngleMeter({
+        src: 'arrow.svg',
+        strokeColor: 'black',
+        bindTo: 'bbb',
+        fillColor: 'yellow',
+        half: true,
+      })
+      b.draw()
+      b.rotateWithHistgram(120)
 
     </script>
 
