@@ -25,7 +25,7 @@ export class AngleMeter {
     this.config = {
       half: options.half,
       enableCrossLight: options.enableCrossLight,
-			baseCirclePadding: 30,
+			baseCirclePadding: options.radius / 3,
       scale: {
         sub : {
           interval: 5,
@@ -47,9 +47,14 @@ export class AngleMeter {
       },
       indicator: {
         color: 'blue',
-        radius: 8,
+        radius: this.radius / 6,
         opacity: 0.8,
       },
+			angleLabel: {
+        opacity: 0.8,
+				color: 'black',
+				fontSize: (this.radius / 7),
+			},
       histgram: {
         color: 'blue',
         factor: 0.94,
@@ -180,13 +185,13 @@ export class AngleMeter {
     this.currentAngleLabelPosition =
       new this.paper.Point(
 				this.center.x,
-				this.center.y - this.radius - this.config.indicator.radius - 12
+				this.center.y - this.radius - this.config.indicator.radius - 18
 			)
 		this.currentAngleLabel = new this.paper.PointText({
 			point: this.currentAngleLabelPosition,
 			justification: 'center',
-			fontSize: 6,
-			fillColor: 'black'
+			fontSize: this.config.angleLabel.fontSize,
+			fillColor: this.config.angleLabel.color,
 		});
 		this.currentAngleLabel.content = this.angle
   }
