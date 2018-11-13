@@ -10,6 +10,54 @@ const defaultOptions = {
   enableCrossLight: false,
 }
 
+class Model{
+  constructor(paperScope, src, boundingbox, scaleFactor, center) {
+    console.log('paper')
+    console.log(paperScope)
+    console.log(paperScope.propject)
+    this.src = src
+    this.boundingbox = boundingbox
+    this.paper = paperScope
+    this.angleHistory = []
+    this.angle = 0
+    this.paper.project.importSVG(this.src, function(item){
+      item.fitBounds(this.boundingbox)
+      item.scale(scaleFactor)
+      this.model = item
+      this.angleHistory.forEach((angle) => {
+        this.rotate(angle)
+      })
+    }.bind(this))//.bind(this))
+  }
+
+  rotateInternal(absAngle){
+    let relativeAngle = - (this.angle - absAngle)
+    this.model.rotate(relativeAngle, this.center)
+    // if (this.config.enableCrossLight){
+    //   this.crosslight.rotate(relativeAngle, this.center)
+    // }
+    // this.indicator.rotate(relativeAngle, this.center)
+		// this.currentAngleLabelPosition = this.currentAngleLabelPosition.rotate(relativeAngle, this.center)
+    // this.currentAngleLabel.position = this.currentAngleLabelPosition
+    // this.currentAngleLabel.content = absAngle
+    // this.angle = absAngle
+  }
+
+  rotateSafe(absAngle){
+    this.paper.activate()
+    if (this.model == null){
+      this.angleHistory.push(absAngle)
+    }else{
+      this.rotateInternal(absAngle)
+    }
+  }
+
+  rotate(absAngle){
+    this.rotateSafe(absAngle)
+  }
+
+}
+
 export class AngleMeter {
   constructor(inputOptions) {
     console.log('--------')
@@ -63,11 +111,19 @@ export class AngleMeter {
         width: 2,
         opacity: 0.4,
       },
-      model: {
-        id: 'model',
-        src: options.src,
-        scaleFactor: 0.6,
-      },
+      models: [
+        {
+          id: 'model',
+          src: options.src,
+          scaleFactor: 0.6,
+        },
+        {
+          id: 'model',
+          src: options.src,
+          scaleFactor: 0.6,
+        },
+      ]
+      ,
     }
 
     this.center= new this.paper.Point(
@@ -81,7 +137,10 @@ export class AngleMeter {
     this.paper.setup(canvas);
     this.drawBaseCircle()
     this.drawScale()
-    this.drawModel()
+    // this.drawModel()
+    let box = this.getModelBoundingBox() 
+    var model = new Model(this.paper, this.config.models[0].src, box, this.config.models[0].scaleFactor, this.center)
+    model.rotate(90)
     this.drawIndicator()
 		this.drawCurrentAngleLabel()
     if (this.config.enableCrossLight){
@@ -142,15 +201,6 @@ export class AngleMeter {
   }
 
   drawModel(){
-    this.paper.project.importSVG(this.config.model.src, function(item){
-      item.data.id = 'model'
-      item.fitBounds(this.getModelBoundingBox())
-      item.scale(this.config.model.scaleFactor)
-      this.model = item
-      this.angleHistory.forEach((angle) => {
-        this.rotate(angle)
-      })
-    }.bind(this))
   }
 
   drawCrossLight(){
