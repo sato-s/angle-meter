@@ -1,6 +1,8 @@
 import paper from 'paper/dist/paper-core'
 import Model from './Model'
 import Crosslight from './Crosslight'
+import Indicator from './Indicator'
+import AngleLabel from './AngleLabel'
 
 const defaultOptions = {
   src: null,
@@ -27,7 +29,7 @@ export class AngleMeter {
       radius: options.radius,
       half: options.half,
       enableCrossLight: options.enableCrossLight,
-			baseCirclePadding: options.radius / 3,
+			baseCirclePadding: options.radius / 2,
       strokeColor: options.strokeColor,
       bindTo: options.bindTo,
       fillColor: options.fillColor,
@@ -52,8 +54,7 @@ export class AngleMeter {
       },
       indicator: {
         color: 'blue',
-        radius: options.radius / 6,
-        opacity: 0.8,
+        radius: options.radius / 6
       },
 			angleLabel: {
         opacity: 0.8,
@@ -98,17 +99,26 @@ export class AngleMeter {
     // crosslight
     new Crosslight(
       this.paper,
-      this.radius,
+      this.config.radius,
       this.config.crosslight.padding,
       this.center,
       this.config.crosslight.color,
       this.config.crosslight.width,
     )
-    this.drawIndicator()
-		this.drawCurrentAngleLabel()
-    if (this.config.enableCrossLight){
-      this.drawCrossLight()
-    }
+    new Indicator(
+      this.paper,
+      this.center,
+      this.config.radius,
+      this.config.indicator.radius,
+      this.config.indicator.color,
+    )
+    new AngleLabel(
+      this.paper,
+      this.center,
+      this.config.radius,
+      this.config.indicator.radius,
+      this.config.indicator.color,
+    )
     this.paper.view.draw();
   }
 
@@ -184,28 +194,9 @@ export class AngleMeter {
   }
 
   drawIndicator(){
-    let center =
-      new this.paper.Point(this.center.x, this.center.y - this.config.radius - this.config.indicator.radius - 3)
-    this.indicator = new this.paper.Path.RegularPolygon(center, 3, this.config.indicator.radius);
-    this.indicator.rotate(180, center)
-    this.indicator.scale(0.4, 1, center)
-    this.indicator.fillColor = this.config.indicator.color;
-    this.indicator.opacity = this.config.indicator.opacity;
   }
 
   drawCurrentAngleLabel(){
-    this.currentAngleLabelPosition =
-      new this.paper.Point(
-				this.center.x,
-				this.center.y - this.config.radius - this.config.indicator.radius - 18
-			)
-		this.currentAngleLabel = new this.paper.PointText({
-			point: this.currentAngleLabelPosition,
-			justification: 'center',
-			fontSize: this.config.angleLabel.fontSize,
-			fillColor: this.config.angleLabel.color,
-		});
-		this.currentAngleLabel.content = this.angle
   }
 
   drawScale(){
