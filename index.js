@@ -58,7 +58,6 @@ export class AngleMeter {
 				fontSize: (options.radius / 6),
 			},
       histgram: {
-        color: 'blue',
         factor: 0.94,
         width: 2,
         opacity: 0.4,
@@ -92,6 +91,16 @@ export class AngleMeter {
       throw new Error(`Couldn't find model with id=${id}`)
     }
     target.rotate(angle)
+  }
+
+  drawHistgrams(id, angles){
+    let target = this.models[id]
+    if (target == null){
+      throw new Error(`Couldn't find model with id=${id}`)
+    }
+    angles.forEach((angle) => {
+      this.drawHistgram(angle, target.color)
+    })
   }
 
   drawBaseCircle(){
@@ -136,11 +145,11 @@ export class AngleMeter {
     }
   }
 
-  drawHistgram(angle){
+  drawHistgram(angle, color){
     this.drawRadiusLine(
       angle,
       this.config.histgram.width,
-      this.config.histgram.color,
+      color,
       this.config.histgram.factor,
       this.config.histgram.opacity
     )

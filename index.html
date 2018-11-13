@@ -13,7 +13,7 @@
         strokeColor: 'red',
         radius: 50,
         bindTo: 'aaa',
-        fillColor: 'pink',
+        fillColor: 'white',
         models: [
           {
             id: 1,
@@ -28,11 +28,12 @@
         ]
       })
       a.draw()
+      a.drawHistgrams(1, [15, 20, 30, 31,32,33,34])
       var b = new anglemeter.AngleMeter({
         strokeColor: 'black',
-        radius: 50,
+        radius: 70,
         bindTo: 'bbb',
-        fillColor: 'yellow',
+        fillColor: 'white',
         half: true,
         models: [
           {
@@ -48,6 +49,7 @@
         ]
       })
       b.draw()
+      b.drawHistgrams(1, [15, 20, 30,30,30,30, 31,32,33,34])
       // b.rotateWithHistgram(120)
 
     </script>

@@ -13,6 +13,7 @@ const getBoundingBox  = (paperScope, center, radius) => {
 export default class Model {
   constructor(paperScope, src, center, radius, color) {
     this.angle = 0
+    this.color = color
     this.image = new Image(
       paperScope,
       src,
