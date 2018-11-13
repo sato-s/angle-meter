@@ -1,4 +1,6 @@
 import paper from 'paper/dist/paper-core'
+import Model from './Model'
+import Crosslight from './Crosslight'
 
 const defaultOptions = {
   src: null,
@@ -10,53 +12,6 @@ const defaultOptions = {
   enableCrossLight: false,
 }
 
-class Model{
-  constructor(paperScope, src, boundingbox, scaleFactor, center) {
-    console.log('paper')
-    console.log(paperScope)
-    console.log(paperScope.propject)
-    this.src = src
-    this.boundingbox = boundingbox
-    this.paper = paperScope
-    this.angleHistory = []
-    this.angle = 0
-    this.paper.project.importSVG(this.src, function(item){
-      item.fitBounds(this.boundingbox)
-      item.scale(scaleFactor)
-      this.model = item
-      this.angleHistory.forEach((angle) => {
-        this.rotate(angle)
-      })
-    }.bind(this))//.bind(this))
-  }
-
-  rotateInternal(absAngle){
-    let relativeAngle = - (this.angle - absAngle)
-    this.model.rotate(relativeAngle, this.center)
-    // if (this.config.enableCrossLight){
-    //   this.crosslight.rotate(relativeAngle, this.center)
-    // }
-    // this.indicator.rotate(relativeAngle, this.center)
-		// this.currentAngleLabelPosition = this.currentAngleLabelPosition.rotate(relativeAngle, this.center)
-    // this.currentAngleLabel.position = this.currentAngleLabelPosition
-    // this.currentAngleLabel.content = absAngle
-    // this.angle = absAngle
-  }
-
-  rotateSafe(absAngle){
-    this.paper.activate()
-    if (this.model == null){
-      this.angleHistory.push(absAngle)
-    }else{
-      this.rotateInternal(absAngle)
-    }
-  }
-
-  rotate(absAngle){
-    this.rotateSafe(absAngle)
-  }
-
-}
 
 export class AngleMeter {
   constructor(inputOptions) {
@@ -137,10 +92,18 @@ export class AngleMeter {
     this.paper.setup(canvas);
     this.drawBaseCircle()
     this.drawScale()
-    // this.drawModel()
-    let box = this.getModelBoundingBox() 
+    // Model
+    let box = this.getModelBoundingBox()
     var model = new Model(this.paper, this.config.models[0].src, box, this.config.models[0].scaleFactor, this.center)
-    model.rotate(90)
+    // crosslight
+    new Crosslight(
+      this.paper,
+      this.radius,
+      this.config.crosslight.padding,
+      this.center,
+      this.config.crosslight.color,
+      this.config.crosslight.width,
+    )
     this.drawIndicator()
 		this.drawCurrentAngleLabel()
     if (this.config.enableCrossLight){
@@ -198,9 +161,6 @@ export class AngleMeter {
       this.circle.strokeColor = this.config.strokeColor;
       this.circle.fillColor = this.config.fillColor;
     }
-  }
-
-  drawModel(){
   }
 
   drawCrossLight(){
