@@ -25,7 +25,7 @@ export class AngleMeter {
       radius: options.radius,
       half: options.half,
       enableCrossLight: options.enableCrossLight,
-			baseCirclePadding: options.radius / 2,
+      baseCirclePadding: options.radius / 2,
       strokeColor: options.strokeColor,
       bindTo: options.bindTo,
       fillColor: options.fillColor,
@@ -52,11 +52,11 @@ export class AngleMeter {
         color: 'blue',
         radius: options.radius / 6
       },
-			angleLabel: {
+      angleLabel: {
         opacity: 0.8,
-				color: 'black',
-				fontSize: (options.radius / 6),
-			},
+        color: 'black',
+        fontSize: (options.radius / 6),
+      },
       histgram: {
         factor: 0.94,
         width: 2,
@@ -66,9 +66,9 @@ export class AngleMeter {
     }
 
     this.center= new this.paper.Point(
-			options.radius + this.config.baseCirclePadding,
-			options.radius + this.config.baseCirclePadding
-		)
+      options.radius + this.config.baseCirclePadding,
+      options.radius + this.config.baseCirclePadding
+    )
   }
 
   draw(){
