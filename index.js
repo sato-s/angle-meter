@@ -12,20 +12,22 @@ const defaultOptions = {
 
 export class AngleMeter {
   constructor(inputOptions) {
+    console.log('--------')
     const options = {}
     Object.assign(options, defaultOptions, inputOptions)
     // Create instance specific paper scope to take care of multiple canvases
     this.paper = new paper.PaperScope();
     this.angle = 0
     this.angleHistory = []
-    this.radius =  options.radius
-    this.strokeColor = options.strokeColor
-    this.bindTo = options.bindTo
-    this.fillColor = options.fillColor
+
     this.config = {
+      radius: options.radius,
       half: options.half,
       enableCrossLight: options.enableCrossLight,
 			baseCirclePadding: options.radius / 3,
+      strokeColor: options.strokeColor,
+      bindTo: options.bindTo,
+      fillColor: options.fillColor,
       scale: {
         sub : {
           interval: 5,
@@ -47,13 +49,13 @@ export class AngleMeter {
       },
       indicator: {
         color: 'blue',
-        radius: this.radius / 6,
+        radius: options.radius / 6,
         opacity: 0.8,
       },
 			angleLabel: {
         opacity: 0.8,
 				color: 'black',
-				fontSize: (this.radius / 6),
+				fontSize: (options.radius / 6),
 			},
       histgram: {
         color: 'blue',
@@ -69,13 +71,13 @@ export class AngleMeter {
     }
 
     this.center= new this.paper.Point(
-			this.radius + this.config.baseCirclePadding,
-			this.radius + this.config.baseCirclePadding
+			options.radius + this.config.baseCirclePadding,
+			options.radius + this.config.baseCirclePadding
 		)
   }
 
   draw(){
-    var canvas = document.getElementById(this.bindTo);
+    var canvas = document.getElementById(this.config.bindTo);
     this.paper.setup(canvas);
     this.drawBaseCircle()
     this.drawScale()
@@ -122,20 +124,20 @@ export class AngleMeter {
   drawBaseCircle(){
     this.circle = new this.paper.Path.Circle({
       center: this.center,
-      radius: this.radius,
+      radius: this.config.radius,
     });
     if (this.config.half){
       // If this is `half` draw arc instead of circle
-      let start = new paper.Point(this.center.x - this.radius, this.center.y)
-      let through = new paper.Point(this.center.x, this.center.y - this.radius)
-      let end = new paper.Point(this.center.x + this.radius, this.center.y)
+      let start = new paper.Point(this.center.x - this.config.radius, this.center.y)
+      let through = new paper.Point(this.center.x, this.center.y - this.config.radius)
+      let end = new paper.Point(this.center.x + this.config.radius, this.center.y)
       let arc = new paper.Path.Arc(start, through, end)
-      arc.strokeColor = this.strokeColor;
-      arc.fillColor = this.fillColor;
+      arc.strokeColor = this.config.strokeColor;
+      arc.fillColor = this.config.fillColor;
     }
     else{
-      this.circle.strokeColor = this.strokeColor;
-      this.circle.fillColor = this.fillColor;
+      this.circle.strokeColor = this.config.strokeColor;
+      this.circle.fillColor = this.config.fillColor;
     }
   }
 
@@ -153,7 +155,7 @@ export class AngleMeter {
 
   drawCrossLight(){
     this.paper.activate()
-    let halfLength = this.radius - this.config.crosslight.padding
+    let halfLength = this.config.radius - this.config.crosslight.padding
     var start = new this.paper.Point(this.center.x, this.center.y - halfLength)
     var end = new this.paper.Point(this.center.x, this.center.y + halfLength)
     let path1 = new this.paper.Path.Line(start, end)
@@ -173,7 +175,7 @@ export class AngleMeter {
 
   drawIndicator(){
     let center =
-      new this.paper.Point(this.center.x, this.center.y - this.radius - this.config.indicator.radius - 3)
+      new this.paper.Point(this.center.x, this.center.y - this.config.radius - this.config.indicator.radius - 3)
     this.indicator = new this.paper.Path.RegularPolygon(center, 3, this.config.indicator.radius);
     this.indicator.rotate(180, center)
     this.indicator.scale(0.4, 1, center)
@@ -185,7 +187,7 @@ export class AngleMeter {
     this.currentAngleLabelPosition =
       new this.paper.Point(
 				this.center.x,
-				this.center.y - this.radius - this.config.indicator.radius - 18
+				this.center.y - this.config.radius - this.config.indicator.radius - 18
 			)
 		this.currentAngleLabel = new this.paper.PointText({
 			point: this.currentAngleLabelPosition,
@@ -235,7 +237,7 @@ export class AngleMeter {
   }
 
   drawRadiusLine(angle, width, color, factor, opacity=1){
-    let start = new this.paper.Point(this.center.x, this.center.y - this.radius)
+    let start = new this.paper.Point(this.center.x, this.center.y - this.config.radius)
     let _end  = this.center
     var vector = start.subtract(_end)
     vector = vector.multiply(factor)
@@ -248,14 +250,14 @@ export class AngleMeter {
   }
 
   getBoundaryPointAtAgnle(angle){
-    var point = new this.paper.Point(this.center.x, this.center.y - this.radius)
+    var point = new this.paper.Point(this.center.x, this.center.y - this.config.radius)
     return point.rotate(angle, this.center)
   }
 
   getModelBoundingBox(){
-    let vector = new this.paper.Point(this.radius, this.radius)
+    let vector = new this.paper.Point(this.config.radius, this.config.radius)
     let topLeft = this.center.subtract(vector)
-    let box = new this.paper.Rectangle(topLeft, this.radius * 2)
+    let box = new this.paper.Rectangle(topLeft, this.config.radius * 2)
     return box
   }
 
