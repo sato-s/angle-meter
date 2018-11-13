@@ -53,7 +53,7 @@ export default class Model {
     this.image.rotate(relativeAngle)
     this.crosslight.rotate(relativeAngle)
     this.indicator.rotate(relativeAngle)
-    this.angleLabel.rotate(relativeAngle)
+    this.angleLabel.rotate(absAngle, relativeAngle)
     this.angle = absAngle
   }
 

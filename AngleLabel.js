@@ -16,9 +16,9 @@ export default class AngleLabel {
     this.currentAngleLabel.content = 0
   }
 
-  rotate(angle){
-    this.currentAngleLabelPosition = this.currentAngleLabelPosition.rotate(angle, this.center)
+  rotate(absAngle, relativeAngle){
+    this.currentAngleLabelPosition = this.currentAngleLabelPosition.rotate(relativeAngle, this.center)
     this.currentAngleLabel.position = this.currentAngleLabelPosition
-    this.currentAngleLabel.content = `${angle}`
+    this.currentAngleLabel.content = `${absAngle}`
   }
 }
