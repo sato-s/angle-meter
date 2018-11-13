@@ -1,44 +1,59 @@
+import Image from './Image'
+import Crosslight from './Crosslight'
+import Indicator from './Indicator'
+import AngleLabel from './AngleLabel'
+
+const getBoundingBox  = (paperScope, center, radius) => {
+  let vector = new paperScope.Point(radius, radius)
+  let topLeft = center.subtract(vector)
+  let box = new paperScope.Rectangle(topLeft, radius * 2)
+  return box
+}
+
 export default class Model {
-  constructor(paperScope, src, boundingbox, scaleFactor, center) {
-    this.src = src
-    this.boundingbox = boundingbox
-    this.paper = paperScope
-    this.angleHistory = []
+  constructor(paperScope, src, center, radius, color) {
     this.angle = 0
-    this.paper.project.importSVG(this.src, function(item){
-      item.fitBounds(this.boundingbox)
-      item.scale(scaleFactor)
-      this.model = item
-      this.angleHistory.forEach((angle) => {
-        this.rotate(angle)
-      })
-    }.bind(this))//.bind(this))
-  }
-
-  rotateInternal(absAngle){
-    let relativeAngle = - (this.angle - absAngle)
-    this.model.rotate(relativeAngle, this.center)
-    // if (this.config.enableCrossLight){
-    //   this.crosslight.rotate(relativeAngle, this.center)
-    // }
-    // this.indicator.rotate(relativeAngle, this.center)
-		// this.currentAngleLabelPosition = this.currentAngleLabelPosition.rotate(relativeAngle, this.center)
-    // this.currentAngleLabel.position = this.currentAngleLabelPosition
-    // this.currentAngleLabel.content = absAngle
-    // this.angle = absAngle
-  }
-
-  rotateSafe(absAngle){
-    this.paper.activate()
-    if (this.model == null){
-      this.angleHistory.push(absAngle)
-    }else{
-      this.rotateInternal(absAngle)
-    }
+    this.image = new Image(
+      paperScope,
+      src,
+      getBoundingBox(paperScope, center, radius),
+      0.6,
+      center,
+      color
+    )
+    // crosslight
+    this.crosslight = new Crosslight(
+      paperScope,
+      radius,
+      10,
+      center,
+      color,
+      2,
+    )
+    let indicatorRadius =  radius / 6
+    this.indicator = new Indicator(
+      paperScope,
+      center,
+      radius,
+      indicatorRadius,
+      color,
+    )
+    this.angleLabel = new AngleLabel(
+      paperScope,
+      center,
+      radius,
+      indicatorRadius,
+      color,
+    )
   }
 
   rotate(absAngle){
-    this.rotateSafe(absAngle)
+    let relativeAngle = - (this.angle - absAngle)
+    this.image.rotate(relativeAngle)
+    this.crosslight.rotate(relativeAngle)
+    this.indicator.rotate(relativeAngle)
+    this.angleLabel.rotate(relativeAngle)
+    this.angle = absAngle
   }
 
 }

@@ -13,6 +13,12 @@ export default class AngleLabel {
       fontSize: indicatorRadius * 1.5,
 			fillColor: color,
 		});
-		this.currentAngleLabel.content = 100
+		this.currentAngleLabel.content = 0
+  }
+
+  rotate(angle){
+		this.currentAngleLabelPosition = this.currentAngleLabelPosition.rotate(angle, this.center)
+    this.currentAngleLabel.position = this.currentAngleLabelPosition
+    this.currentAngleLabel.content = `${angle}`
   }
 }

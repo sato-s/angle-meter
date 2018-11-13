@@ -10,4 +10,8 @@ export default class Indicator {
     this.indicator.fillColor = color
     this.indicator.opacity = 0.8
   }
+
+  rotate(angle){
+    this.indicator.rotate(angle, this.center)
+  }
 }

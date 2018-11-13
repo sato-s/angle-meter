@@ -14,20 +14,41 @@
         radius: 50,
         bindTo: 'aaa',
         fillColor: 'pink',
-        enableCrossLight: true,
+        models: [
+          {
+            id: 1,
+            src: 'arrow.svg',
+            color: 'yellow',
+          },
+          {
+            id: 2,
+            src: 'arrow.svg',
+            color: 'blue',
+          }
+        ]
       })
       a.draw()
-      a.rotateWithHistgram(65)
       var b = new anglemeter.AngleMeter({
-        src: 'arrow.svg',
         strokeColor: 'black',
         radius: 50,
         bindTo: 'bbb',
         fillColor: 'yellow',
         half: true,
+        models: [
+          {
+            id: 1,
+            src: 'sample/boat-side.svg',
+            color: 'red',
+          },
+          {
+            id: 2,
+            src: 'sample/boat-side.svg',
+            color: 'blue',
+          }
+        ]
       })
       b.draw()
-      b.rotateWithHistgram(120)
+      // b.rotateWithHistgram(120)
 
     </script>
 

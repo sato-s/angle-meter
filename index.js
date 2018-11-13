@@ -1,8 +1,5 @@
 import paper from 'paper/dist/paper-core'
 import Model from './Model'
-import Crosslight from './Crosslight'
-import Indicator from './Indicator'
-import AngleLabel from './AngleLabel'
 
 const defaultOptions = {
   src: null,
@@ -17,7 +14,6 @@ const defaultOptions = {
 
 export class AngleMeter {
   constructor(inputOptions) {
-    console.log('--------')
     const options = {}
     Object.assign(options, defaultOptions, inputOptions)
     // Create instance specific paper scope to take care of multiple canvases
@@ -67,19 +63,7 @@ export class AngleMeter {
         width: 2,
         opacity: 0.4,
       },
-      models: [
-        {
-          id: 'model',
-          src: options.src,
-          scaleFactor: 0.6,
-        },
-        {
-          id: 'model',
-          src: options.src,
-          scaleFactor: 0.6,
-        },
-      ]
-      ,
+      models: options.models,
     }
 
     this.center= new this.paper.Point(
@@ -94,63 +78,20 @@ export class AngleMeter {
     this.drawBaseCircle()
     this.drawScale()
     // Model
-    let box = this.getModelBoundingBox()
-    var model = new Model(this.paper, this.config.models[0].src, box, this.config.models[0].scaleFactor, this.center)
-    // crosslight
-    new Crosslight(
-      this.paper,
-      this.config.radius,
-      this.config.crosslight.padding,
-      this.center,
-      this.config.crosslight.color,
-      this.config.crosslight.width,
-    )
-    new Indicator(
-      this.paper,
-      this.center,
-      this.config.radius,
-      this.config.indicator.radius,
-      this.config.indicator.color,
-    )
-    new AngleLabel(
-      this.paper,
-      this.center,
-      this.config.radius,
-      this.config.indicator.radius,
-      this.config.indicator.color,
-    )
+    this.models = {}
+    this.config.models.forEach((config) => {
+      let m = new Model( this.paper, config.src, this.center, this.config.radius, config.color)
+      this.models[config.id] = m
+    })
     this.paper.view.draw();
   }
 
-  rotateInternal(absAngle){
-    let relativeAngle = - (this.angle - absAngle)
-    this.model.rotate(relativeAngle, this.center)
-    if (this.config.enableCrossLight){
-      this.crosslight.rotate(relativeAngle, this.center)
+  rotate(id, angle){
+    let target = this.models[id]
+    if (target == null){
+      throw new Error(`Couldn't find model with id=${id}`)
     }
-    this.indicator.rotate(relativeAngle, this.center)
-		this.currentAngleLabelPosition = this.currentAngleLabelPosition.rotate(relativeAngle, this.center)
-    this.currentAngleLabel.position = this.currentAngleLabelPosition
-    this.currentAngleLabel.content = absAngle
-    this.angle = absAngle
-  }
-
-  rotateSafe(absAngle){
-    this.paper.activate()
-    if (this.model == null){
-      this.angleHistory.push(absAngle)
-    }else{
-      this.rotateInternal(absAngle)
-    }
-  }
-
-  rotate(absAngle){
-    this.rotateSafe(absAngle)
-  }
-
-  rotateWithHistgram(absAngle){
-    this.rotateSafe(absAngle)
-    this.drawHistgram(absAngle)
+    target.rotate(angle)
   }
 
   drawBaseCircle(){
@@ -171,32 +112,6 @@ export class AngleMeter {
       this.circle.strokeColor = this.config.strokeColor;
       this.circle.fillColor = this.config.fillColor;
     }
-  }
-
-  drawCrossLight(){
-    this.paper.activate()
-    let halfLength = this.config.radius - this.config.crosslight.padding
-    var start = new this.paper.Point(this.center.x, this.center.y - halfLength)
-    var end = new this.paper.Point(this.center.x, this.center.y + halfLength)
-    let path1 = new this.paper.Path.Line(start, end)
-    path1.strokeColor = this.config.crosslight.color
-    path1.strokeWidth = this.config.crosslight.width
-    path1.dashArray = [2, 2]
-
-    var start = new this.paper.Point(this.center.x - halfLength, this.center.y)
-    var end = new this.paper.Point(this.center.x + halfLength, this.center.y)
-    let path2 = new this.paper.Path.Line(start, end)
-    path2.strokeColor = this.config.crosslight.color
-    path2.strokeWidth = this.config.crosslight.width
-    path2.dashArray = [2, 2]
-
-    this.crosslight = new this.paper.Group([path1, path2])
-  }
-
-  drawIndicator(){
-  }
-
-  drawCurrentAngleLabel(){
   }
 
   drawScale(){
@@ -221,12 +136,6 @@ export class AngleMeter {
     }
   }
 
-  drawLabel(point, text){
-    let pointText = new this.paper.PointText(point)
-    pointText.justification = 'center';
-    pointText.content = text
-  }
-
   drawHistgram(angle){
     this.drawRadiusLine(
       angle,
@@ -248,18 +157,6 @@ export class AngleMeter {
     path.strokeWidth = width
     path.opacity = opacity
     path.rotate(angle, this.center)
-  }
-
-  getBoundaryPointAtAgnle(angle){
-    var point = new this.paper.Point(this.center.x, this.center.y - this.config.radius)
-    return point.rotate(angle, this.center)
-  }
-
-  getModelBoundingBox(){
-    let vector = new this.paper.Point(this.config.radius, this.config.radius)
-    let topLeft = this.center.subtract(vector)
-    let box = new this.paper.Rectangle(topLeft, this.config.radius * 2)
-    return box
   }
 
 }
