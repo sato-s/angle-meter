@@ -85,6 +85,20 @@ export class AngleMeter {
     this.paper.view.draw();
   }
 
+  redraw(models){
+    var canvas = document.getElementById(this.config.bindTo);
+    this.paper.setup(canvas);
+    this.drawBaseCircle()
+    this.drawScale()
+    // Model
+    this.models = {}
+    models.forEach((config) => {
+      let m = new Model( this.paper, config.src, this.center, this.config.radius, config.color)
+      this.models[config.id] = m
+    })
+    this.paper.view.draw();
+  }
+
   rotate(id, angle){
     let target = this.models[id]
     if (target == null){
