@@ -1,7 +1,7 @@
 module.exports = {
   devtool: "source-map",
   performance: { hints: false },
-  entry: './AngleMeter.js',
+  entry: './index.js',
   output: {
     filename: 'anglemeter.js',
     library: 'anglemeter',
