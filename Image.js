@@ -12,6 +12,7 @@ export default class Image {
       item.scale(scaleFactor)
       this.image = item
       this.image.fillColor = this.color
+      this.image.opacity = 0.8
       this.angleHistory.forEach((angle) => {
         this.rotate(angle)
       })
