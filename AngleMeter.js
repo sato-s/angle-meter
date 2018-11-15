@@ -11,7 +11,6 @@ const defaultOptions = {
   enableCrossLight: false,
 }
 
-
 export class AngleMeter {
   constructor(inputOptions) {
     const options = {}
