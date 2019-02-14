@@ -16,6 +16,13 @@ module.exports = {
         },
         exclude: /(node_modules|bower_components)/,
       },
+      {
+        test: /\.svg$/,
+        use: {
+          loader: 'url-loader'
+        },
+        exclude: /(node_modules|bower_components)/,
+      }
     ]
   },
 }

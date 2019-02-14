@@ -1,8 +1,9 @@
 import paper from 'paper/dist/paper-core'
 import Model from './Model'
+import DefaultArrow from './arrow.svg'
 
 const defaultOptions = {
-  src: null,
+  src: DefaultArrow,
   strokeColor: 'black',
   fillColor: 'white',
   bindTo: 'anglemeter',
@@ -14,14 +15,16 @@ const defaultOptions = {
 
 export class AngleMeter {
   constructor(inputOptions) {
-    const options = {}
+    var options = {}
     Object.assign(options, defaultOptions, inputOptions)
+    console.log(options)
     // Create instance specific paper scope to take care of multiple canvases
     this.paper = new paper.PaperScope();
     this.angle = 0
     this.angleHistory = []
 
     this.config = {
+      src: options.src,
       radius: options.radius,
       half: options.half,
       enableCrossLight: options.enableCrossLight,

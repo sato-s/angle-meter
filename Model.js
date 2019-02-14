@@ -2,6 +2,7 @@ import Image from './Image'
 import Crosslight from './Crosslight'
 import Indicator from './Indicator'
 import AngleLabel from './AngleLabel'
+import DefaultArrow from './arrow.svg'
 
 const getBoundingBox  = (paperScope, center, radius) => {
   let vector = new paperScope.Point(radius, radius)
@@ -14,6 +15,9 @@ export default class Model {
   constructor(paperScope, src, center, radius, color) {
     this.angle = 0
     this.color = color
+    if (src == null){
+      src = DefaultArrow
+    }
     this.image = new Image(
       paperScope,
       src,

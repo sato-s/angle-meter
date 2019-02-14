@@ -4,55 +4,32 @@
     <script type="text/javascript" src="dist/anglemeter.js"></script>
   </head>
   <body>
-      <h1>tatac</h1>
-            <canvas id="aaa" resize></canvas>
-            <canvas id="bbb" height="600px" resize></canvas>
-    <script>
-      var a = new anglemeter.AngleMeter({
-        src: 'arrow.svg',
-        strokeColor: 'red',
-        radius: 50,
-        bindTo: 'aaa',
-        fillColor: 'white',
-        models: [
-          {
-            id: 1,
-            src: 'arrow.svg',
-            color: 'yellow',
-          },
-          {
-            id: 2,
-            src: 'arrow.svg',
-            color: 'blue',
-          }
-        ]
-      })
-      a.draw()
-      a.drawHistgrams(1, [15, 20, 30, 31,32,33,34])
-      var b = new anglemeter.AngleMeter({
-        strokeColor: 'black',
-        radius: 70,
-        bindTo: 'bbb',
-        fillColor: 'white',
-        half: true,
-        models: [
-          {
-            id: 1,
-            src: 'sample/boat-side.svg',
-            color: 'red',
-          },
-          {
-            id: 2,
-            src: 'sample/boat-side.svg',
-            color: 'blue',
-          }
-        ]
-      })
-      b.draw()
-      b.drawHistgrams(1, [15, 20, 30,30,30,30, 31,32,33,34])
-      // b.rotateWithHistgram(120)
-
-    </script>
+      <h1>AngleMeter.js</h1>
+      <h2>Basic Sample</h2>
+      <canvas id="sample_a" resize></canvas>
 
   </body>
+
+  <script>
+    var a = new anglemeter.AngleMeter({
+      strokeColor: 'red',
+      radius: 50,
+      bindTo: 'sample_a',
+      fillColor: 'pink',
+      models: [
+        {
+          id: 1,
+          // src: 'arrow.svg',
+          color: 'yellow',
+        },
+        {
+          id: 2,
+          // src: 'arrow.svg',
+          color: 'blue',
+        }
+      ]
+    })
+    a.draw()
+    a.drawHistgrams(1, [15, 20, 30, 31,32,33,34])
+  </script>
 </html>
