@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="dist/anglemeter.js"></script>
+  </head>
+  <body>
+      <h1>AngleMeter.js</h1>
+      <h2>Basic Sample</h2>
+      <canvas id="basic" resize></canvas>
+      <h2>Color Sample</h2>
+      <canvas id="color" resize></canvas>
+
+  </body>
+
+  <script>
+    var basic = new anglemeter.AngleMeter({
+      radius: 50,
+      bindTo: 'basic',
+    })
+    basic.draw()
+    var color = new anglemeter.AngleMeter({
+      strokeColor: 'red',
+      radius: 50,
+      bindTo: 'color',
+      fillColor: 'green',
+      models: [
+        {
+          id: 1,
+          color: 'yellow',
+        }
+      ]
+    })
+    color.draw()
+    // a.drawHistgrams(1, [15, 20, 30, 31,32,33,34])
+  </script>
+</html>

@@ -3,13 +3,19 @@ import Model from './Model'
 import DefaultArrow from './arrow.svg'
 
 const defaultOptions = {
-  src: DefaultArrow,
   strokeColor: 'black',
   fillColor: 'white',
   bindTo: 'anglemeter',
   radius: 70,
   half: false,
   enableCrossLight: false,
+  models: [
+    {
+      id: 1,
+      img: DefaultArrow,
+      color: 'blue',
+    }
+  ]
 }
 
 
@@ -24,7 +30,6 @@ export class AngleMeter {
     this.angleHistory = []
 
     this.config = {
-      src: options.src,
       radius: options.radius,
       half: options.half,
       enableCrossLight: options.enableCrossLight,
@@ -81,9 +86,9 @@ export class AngleMeter {
     this.drawScale()
     // Model
     this.models = {}
-    this.config.models.forEach((config) => {
-      let m = new Model( this.paper, config.src, this.center, this.config.radius, config.color)
-      this.models[config.id] = m
+    this.config.models.forEach((c) => {
+      let m = new Model(this.paper, this.center, this.config.radius, c.img, c.color)
+      this.models[c.id] = m
     })
     this.paper.view.draw();
   }
@@ -96,7 +101,7 @@ export class AngleMeter {
     // Model
     this.models = {}
     models.forEach((config) => {
-      let m = new Model( this.paper, config.src, this.center, this.config.radius, config.color)
+      let m = new Model(this.paper, config.img, this.center, this.config.radius, config.color)
       this.models[config.id] = m
     })
     this.paper.view.draw();

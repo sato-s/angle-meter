@@ -11,16 +11,23 @@ const getBoundingBox  = (paperScope, center, radius) => {
   return box
 }
 
+const defaultOptions = {
+  img: DefaultArrow,
+}
+
 export default class Model {
-  constructor(paperScope, src, center, radius, color) {
+  constructor(paperScope, center, radius, img, color) {
+    if (img == null){
+      img = DefaultArrow
+    }
+    if (color == null){
+      color = "blue"
+    }
     this.angle = 0
     this.color = color
-    if (src == null){
-      src = DefaultArrow
-    }
     this.image = new Image(
       paperScope,
-      src,
+      img,
       getBoundingBox(paperScope, center, radius),
       0.6,
       center,
